@@ -47,6 +47,21 @@ const prod = {
     USER_POOL_ID: "us-east-2_egwqWK6CX",
     APP_CLIENT_ID: "tlp82v25e2p38elgfrhe0k56v",
     IDENTITY_POOL_ID: "us-east-2:c57c0773-c0ab-49e2-9a42-3f90cd7855fa"
+  },
+
+  mapbox: {
+    TOKEN: "pk.eyJ1IjoieWh1YW5nNyIsImEiOiJjazJocjliaWEwdnd6M2hxZ2FnNHM3cDkwIn0.UQxOTkmbQTAv-e9El4zLKQ",
+    STREET_STYLE: "mapbox://styles/yhuang7/ck6nudp1h1am11intobzjm1em",
+    SATELLITE_STYLE: "mapbox://styles/yhuang7/ck7sem6mk2mi61imk9yqls0un",
+    TRANSITION_DURATION: 0,
+  },
+
+  projectStatus: {
+    PLAN: 1,
+    DESIGN: 2,
+    IMPLEMENT: 3,
+    LIVE: 4,
+    ARCHIVE: 5
   }
 };
 
