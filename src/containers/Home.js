@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { ListGroup, ListGroupItem, Badge } from "react-bootstrap";
+import { ListGroup, ListGroupItem, Badge, Nav, Button } from "react-bootstrap";
 import { useAppContext } from "../libs/contextLib";
 import { onError } from "../libs/errorLib";
 import "./Home.css";
 import { API, Auth } from "aws-amplify";
 import { LinkContainer } from "react-router-bootstrap";
+import { Link } from "react-router-dom";
 
 
 export default function Home() {
@@ -89,8 +90,16 @@ export default function Home() {
   function renderLander() {
     return (
       <div className="lander">
-        <h1>fl-aces</h1>
-        <p>project upload</p>
+        <h1>FL ACES</h1>
+        <p></p>
+        <div>
+          <Link to="/login" className="btn btn-info btn-lg" style={{margin: "20px"}}>
+            Login
+        </Link>
+          <Link to="/signup" className="btn btn-success btn-lg" style={{margin: "20px"}}>
+            Signup
+        </Link>
+        </div>
       </div>
     );
   }
