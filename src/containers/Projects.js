@@ -73,13 +73,13 @@ export default function Projects() {
 
         if (imageFiles) {
           project.imageFilesURL = await Storage.get(imageFiles, {
-            level: "protected",
+            //level: "protected",
             identityId: project.userId
           });
         }
         if (dataFiles) {
           project.dataFilesURL = await Storage.get(dataFiles, {
-            level: "protected",
+            //level: "protected",
             identityId: project.userId
           });
         }
@@ -244,7 +244,7 @@ export default function Projects() {
       //console.log(project.imageFiles);
       if (project.imageFiles) {
         await Storage.remove(project.imageFiles, {
-          level: "protected",
+          //level: "protected",
           identityId: project.userId
         });
       }
@@ -252,7 +252,7 @@ export default function Projects() {
       //console.log(project.dataFiles);
       if (project.dataFiles) {
         await Storage.remove(project.dataFiles, {
-          level: "protected",
+          //level: "protected",
           identityId: project.userId
         });
       }
