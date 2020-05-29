@@ -1,0 +1,38 @@
+.Home {
+  margin: 15px 0px;
+}
+
+.Home .lander {
+  padding: 80px 0;
+  text-align: center;
+}
+
+.Home .lander h1 {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+}
+
+.Home .lander p {
+  color: #999;
+}
+
+.Home .projects h4 {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 200;
+  overflow: hidden;
+  line-height: 1.5;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.Home .projects p {
+  color: black;
+}
+.Home .projects .title {
+  color: black;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.Home .projects .subtext {
+  color: #666;
+  font-size: 0.75rem;
+}
