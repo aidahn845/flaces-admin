@@ -23,11 +23,11 @@ const dev = {
   },
 
   projectStatus: {
-    PLAN: 1,
-    DESIGN: 2,
-    IMPLEMENT: 3,
-    LIVE: 4,
-    ARCHIVE: 5
+    PLAN: 1, // planning
+    DESIGN: 2,  // design
+    IMPLEMENT: 3,  // evaluation
+    LIVE: 4,  // deployment
+    ARCHIVE: 5  // others
   }
 };
 

@@ -134,7 +134,7 @@ export default function Projects() {
 
 
   function validateForm() {
-    return title.length > 0 && organization.length > 0 &&
+    return title.length > 0 && organization && organization.length > 0 &&
       (cata || catc || cate || cats) && (modea || modeb || modet) &&
       geom && geom.features.length > 0;
   }
@@ -340,7 +340,7 @@ export default function Projects() {
           <Form.Row>
             <Form.Group as={Col} controlId="category">
               <Form.Label>Category</Form.Label>
-              <Form.Check type="switch" id="categorya" label="Autonomous" checked={cata} onChange={e => setCata(e.target.checked)} />
+              <Form.Check type="switch" id="categorya" label="Automated" checked={cata} onChange={e => setCata(e.target.checked)} />
               <Form.Check type="switch" id="categoryc" label="Connected" checked={catc} onChange={e => setCatc(e.target.checked)} />
               <Form.Check type="switch" id="categorye" label="Electric" checked={cate} onChange={e => setCate(e.target.checked)} />
               <Form.Check type="switch" id="categorys" label="Shared" checked={cats} onChange={e => setCats(e.target.checked)} />

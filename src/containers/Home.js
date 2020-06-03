@@ -71,7 +71,7 @@ export default function Home() {
               {
                 project.active
                   ? <Badge variant="primary" className="float-right">Active</Badge>
-                  : <Badge variant="secondary" className="float-right">Pending</Badge>
+                  : <Badge variant="secondary" className="float-right">Inactive</Badge>
               }
             </div>
             <div class="subtext">{"Created: " + new Date(project.createdAt).toLocaleDateString()}</div>
