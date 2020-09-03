@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { ListGroup, ListGroupItem, Badge, Nav, Button } from "react-bootstrap";
+import Spinner from 'react-bootstrap/Spinner'
 import { useAppContext } from "../libs/contextLib";
 import { onError } from "../libs/errorLib";
 import "./Home.css";
-import { API, Auth } from "aws-amplify";
+import { API, Auth, Storage } from "aws-amplify";
 import { LinkContainer } from "react-router-bootstrap";
 import { Link } from "react-router-dom";
-
 
 export default function Home() {
   const [projects, setProjects] = useState([]);
@@ -37,11 +37,11 @@ export default function Home() {
         //console.log(projects);
         setProjects(projects);
         //setActiveProjects(activeProjects);
+        setIsLoading(false);
       } catch (e) {
         onError(e);
       }
-
-      setIsLoading(false);
+      
     }
 
     onLoad();
@@ -70,8 +70,8 @@ export default function Home() {
               {project.title.trim().split("\n")[0]}
               {
                 project.active
-                  ? <Badge variant="primary" className="float-right">Active</Badge>
-                  : <Badge variant="secondary" className="float-right">Inactive</Badge>
+                  ? <Badge variant="primary" className="float-right">Approved</Badge>
+                  : <Badge variant="secondary" className="float-right">Pending</Badge>
               }
             </div>
             <div class="subtext">{"Created: " + new Date(project.createdAt).toLocaleDateString()}</div>
@@ -80,7 +80,7 @@ export default function Home() {
       ) : (
           <LinkContainer key="new" to="/projects/new">
             <ListGroup.Item>
-              <b>{"\uFF0B"}</b> Create new project
+              <b>{"\uFF0B"}</b> New Project
             </ListGroup.Item>
           </LinkContainer>
         )
@@ -93,10 +93,10 @@ export default function Home() {
         <h1>FL ACES</h1>
         <p></p>
         <div>
-          <Link to="/login" className="btn btn-info btn-lg" style={{margin: "20px"}}>
+          <Link to="/login" className="btn btn-info btn-lg" style={{ margin: "20px" }}>
             Login
         </Link>
-          <Link to="/signup" className="btn btn-success btn-lg" style={{margin: "20px"}}>
+          <Link to="/signup" className="btn btn-success btn-lg" style={{ margin: "20px" }}>
             Signup
         </Link>
         </div>
@@ -107,9 +107,12 @@ export default function Home() {
   function renderProjects() {
     return (
       <div className="projects">
-        {/*         {!isLoading && 
-          <span>{projects.length + " total, " + activeProjects.length + " active"}</span>
-        } */}
+        {isLoading &&
+          <Spinner animation="border" />
+        }
+        {!isLoading && projects.length > 0 &&
+          <div>{projects.length + " project" + (projects.length > 1 ? "s" : "")}</div>
+        }
         <ListGroup>
           {!isLoading && renderProjectsList(projects)}
         </ListGroup>
@@ -120,8 +123,8 @@ export default function Home() {
   return (
     <div className="Home">
       {
-        //isAuthenticated ? renderProjects() : renderLander()
-        renderProjects()
+        isAuthenticated ? renderProjects() : renderLander()
+        //renderProjects()
       }
     </div>
   );

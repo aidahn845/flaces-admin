@@ -62,8 +62,8 @@ export default function NewProject() {
 
   function validateForm() {
     return title.length > 0 && organization.length > 0 &&
-      (cata || catc || cate || cats) && (modea || modeb || modet) &&
-      geom && geom.features.length > 0;
+      (cata || catc || cate || cats) && (modea || modeb || modet) /*&&
+      geom && geom.features.length > 0*/;
   }
 
   function handleImageFileChange(event) {
@@ -74,6 +74,22 @@ export default function NewProject() {
   function handleDataFileChange(event) {
     dataFile.current = event.target.files[0];
     setDataFileLabel(dataFile.current ? dataFile.current.name : "Data file");
+  }
+
+  function getProjectLocation(geom) {    
+    var loc;
+    if (geom && geom.features.length > 0) {
+      loc = center(geom);
+    } else {
+      loc = {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [-84.334687 + 0.12 * Math.random(), 30.397003 + 0.08 * Math.random()]
+        }
+      }
+    }
+    return loc;
   }
 
 
@@ -124,7 +140,7 @@ export default function NewProject() {
         organization: organization,
         startDate: startDate,
         endDate: endDate,
-        location: center(geom),
+        location: getProjectLocation(geom),
         geom: geom,
         dataFiles: dataf,
         imageFiles: imagef
@@ -241,16 +257,16 @@ export default function NewProject() {
           <div>
             <MapGL {...viewport}
               style={{ width: '100%', height: '400px' }}
-              mapStyle="mapbox://styles/mapbox/light-v9"
+              mapStyle="mapbox://styles/mapbox/light-v10"
               accessToken={config.mapbox.TOKEN}
               onViewportChange={setViewport}
             >
               <Draw combineFeaturesControl={false} uncombineFeaturesControl={false}
                 onChange={handleMapDrawChange} />
             </MapGL>
-            {/* <div>
+            <div>
               {geom != null && JSON.stringify(geom)}
-            </div> */}
+            </div>
           </div>
         </Form.Group>
 

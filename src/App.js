@@ -45,7 +45,7 @@ function App() {
     !isAuthenticating &&
     <div className="App container">
       <Navbar bg="light" fluid collapseOnSelect expand="md">
-        <Navbar.Brand href="/">FL ACES</Navbar.Brand>
+        <Navbar.Brand href="/">FL ACES Admin</Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
           <Nav className="ml-auto">

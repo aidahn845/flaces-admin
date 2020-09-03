@@ -52,7 +52,7 @@ export default function Projects() {
   const [viewport, setViewport] = React.useState({
     latitude: 28.058589, //29.15,
     longitude: -82.413983, //-82.5,
-    zoom: 6.5,
+    zoom: 5.7,
     bearing: 0,
     pitch: 0,
   });
@@ -110,11 +110,11 @@ export default function Projects() {
         if (endDate)
           setEndDate(endDate);
 
-        if (geom && geom.features)
+        if (geom && geom.features.length > 0) {
           setGeom(geom);
+        }
 
-        //console.log(location);
-        if (location && location.geometry && location.geometry.coordinates) {
+        if (location && location.geometry && location.geometry.coordinates && location.geometry.coordinates[0]) {
           setViewport({
             latitude: location.geometry.coordinates[1],
             longitude: location.geometry.coordinates[0],
@@ -135,8 +135,8 @@ export default function Projects() {
 
   function validateForm() {
     return title.length > 0 && organization && organization.length > 0 &&
-      (cata || catc || cate || cats) && (modea || modeb || modet) &&
-      geom && geom.features.length > 0;
+      (cata || catc || cate || cats) && (modea || modeb || modet) /*&&
+      geom && geom.features.length > 0*/;
   }
 
   function formatFilename(str) {
@@ -153,6 +153,21 @@ export default function Projects() {
     setDataFileLabel(dataFile.current ? dataFile.current.name : "Data file");
   }
 
+  function getProjectLocation(geom) {
+    var loc;
+    if (geom && geom.features.length > 0) {
+      loc = center(geom);
+    } else {
+      loc = {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [-84.334687 + 0.12 * Math.random(), 30.397003 + 0.08 * Math.random()]
+        }
+      }
+    }
+    return loc;
+  }
 
   function saveProject(project) {
     return API.put("projects", `/projects/${id}`, {
@@ -209,7 +224,7 @@ export default function Projects() {
         organization: organization,
         startDate: startDate,
         endDate: endDate,
-        location: center(geom),
+        location: getProjectLocation(geom),
         geom: geom,
         dataFiles: dataf || project.dataFiles,
         imageFiles: imagef || project.imageFiles
@@ -358,16 +373,16 @@ export default function Projects() {
             <div>
               <MapGL {...viewport}
                 style={{ width: '100%', height: '400px' }}
-                mapStyle="mapbox://styles/mapbox/light-v9"
+                mapStyle="mapbox://styles/mapbox/light-v10"
                 accessToken={config.mapbox.TOKEN}
                 onViewportChange={setViewport}
               >
-                <Draw combineFeaturesControl={false} uncombineFeaturesControl={false}
-                  data={geom} onChange={handleMapDrawChange} />
+                <Draw combineFeaturesControl={false} uncombineFeaturesControl={false} data={geom}
+                  onChange={handleMapDrawChange} />
               </MapGL>
-              {/*               <div>
+              <div>
                 {geom != null && JSON.stringify(geom)}
-              </div> */}
+              </div>
             </div>
           </Form.Group>
 
