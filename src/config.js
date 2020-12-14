@@ -23,11 +23,13 @@ const dev = {
   },
 
   projectStatus: {
-    PLAN: 1, // planning
-    DESIGN: 2,  // design
-    IMPLEMENT: 3,  // evaluation
-    LIVE: 4,  // deployment
-    ARCHIVE: 5  // others
+    PLAN: 1,
+    DESIGN: 2,
+    EVALUATION: 3,
+    DEPLOYMENT: 4,
+    DATA: 5,
+    OTHER: 6,
+    ARCHIVE: 99
   }
 };
 
@@ -59,9 +61,11 @@ const prod = {
   projectStatus: {
     PLAN: 1,
     DESIGN: 2,
-    IMPLEMENT: 3,
-    LIVE: 4,
-    ARCHIVE: 5
+    EVALUATION: 3,
+    DEPLOYMENT: 4,
+    DATA: 5,
+    OTHER: 6,
+    ARCHIVE: 99
   }
 };
 

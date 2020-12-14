@@ -16,7 +16,7 @@ import MapGL from '@urbica/react-map-gl';
 import Draw from '@urbica/react-map-gl-draw';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
-import center from '@turf/center'
+import { center, length, along, centroid, centerOfMass } from '@turf/turf'
 
 
 export default function Projects() {
@@ -28,6 +28,7 @@ export default function Projects() {
   const [project, setProject] = useState(null);
   const [status, setStatus] = useState();
   const [title, setTitle] = useState("");
+  const [shortTitle, setShortTitle] = useState("");
   const [cata, setCata] = useState(false);
   const [catc, setCatc] = useState(false);
   const [cate, setCate] = useState(false);
@@ -44,6 +45,7 @@ export default function Projects() {
   const [imageFileLabel, setImageFileLabel] = useState("Image file");
   const dataFile = useRef(null);
   const [dataFileLabel, setDataFileLabel] = useState("Data file");
+  const [statewide, setStatewide] = useState(false);
 
   const [editorState, setEditorState] = useState(
     () => EditorState.createEmpty(),
@@ -58,7 +60,6 @@ export default function Projects() {
   });
   const [geom, setGeom] = useState();
 
-
   useEffect(() => {
     function loadProject() {
       return API.get("projects", `/projects/${id}`);
@@ -68,8 +69,8 @@ export default function Projects() {
       try {
         const project = await loadProject();
 
-        const { title, description, status, category, mode, district, lead, organization,
-          startDate, endDate, location, geom, imageFiles, dataFiles } = project;
+        const { title, shortTitle, description, status, category, mode, district, lead, organization,
+          startDate, endDate, location, geom, imageFiles, dataFiles, statewide } = project;
 
         if (imageFiles) {
           project.imageFilesURL = await Storage.get(imageFiles, {
@@ -85,6 +86,7 @@ export default function Projects() {
         }
 
         setTitle(title);
+        setShortTitle(shortTitle);
         setStatus(status);
         if (description && description.blocks) {
           setEditorState(EditorState.createWithContent(convertFromRaw(description)));
@@ -122,6 +124,8 @@ export default function Projects() {
           });
         }
 
+        setStatewide(statewide);
+
         setProject(project);
       } catch (e) {
         onError(e);
@@ -156,20 +160,33 @@ export default function Projects() {
   function getProjectLocation(geom) {
     var loc;
     if (geom && geom.features.length > 0) {
-      loc = center(geom);
-    } else {
-      loc = {
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [-84.334687 + 0.12 * Math.random(), 30.397003 + 0.08 * Math.random()]
-        }
+      // if has point, use point
+      // if has polygon, use center of polygon
+      // else (linestrings), mid length
+      var feature = geom.features[0];
+
+      if (feature.geometry.type === "Point") {
+        //console.log("point: " + feature.geometry.coordinates.toString());
+        return feature;
+      } else if (feature.geometry.type === "Polygon") {
+        loc = centroid(feature);
+        //console.log("Polygon: " + loc.geometry.coordinates.toString());
+        return loc;
+      } else if (feature.geometry.type === "LineString") {
+        var len = length(feature);
+        loc = along(feature, len / 2);
+        //console.log("linestring: " + loc.geometry.coordinates.toString());
+        return loc;
       }
+
+      loc = center(geom);
     }
     return loc;
   }
 
   function saveProject(project) {
+          console.log('id: ' + id);
+
     return API.put("projects", `/projects/${id}`, {
       body: project
     });
@@ -183,8 +200,7 @@ export default function Projects() {
     if ((imageFile.current && imageFile.current.size > config.MAX_ATTACHMENT_SIZE) ||
       (dataFile.current && dataFile.current.size > config.MAX_ATTACHMENT_SIZE)) {
       alert(
-        `Please choose a file smaller than ${
-        config.MAX_ATTACHMENT_SIZE / 1000000
+        `Please choose a file smaller than ${config.MAX_ATTACHMENT_SIZE / 1000000
         } MB.`
       );
       return;
@@ -210,9 +226,10 @@ export default function Projects() {
       if (dataFile.current) {
         dataf = await s3Upload(dataFile.current);
       }
-
+      
       await saveProject({
         title: title,
+        shortTitle: shortTitle,
         description: convertToRaw(editorState.getCurrentContent()),
         status: status,
         category: catArr,
@@ -224,10 +241,11 @@ export default function Projects() {
         organization: organization,
         startDate: startDate,
         endDate: endDate,
-        location: getProjectLocation(geom),
-        geom: geom,
+        location: statewide ? null : getProjectLocation(geom),
+        geom: statewide ? null : geom,
         dataFiles: dataf || project.dataFiles,
-        imageFiles: imagef || project.imageFiles
+        imageFiles: imagef || project.imageFiles,
+        statewide: statewide
       });
 
       history.push("/");
@@ -299,6 +317,14 @@ export default function Projects() {
             />
           </Form.Group>
 
+          <Form.Group controlId="shortTitle">
+            <Form.Label>Short Title (for display in map view)</Form.Label>
+            <Form.Control
+              value={shortTitle}
+              onChange={e => setShortTitle(e.target.value)}
+            />
+          </Form.Group>
+
           <Form.Group controlId="organization">
             <Form.Label>Organization</Form.Label>
             <Form.Control
@@ -347,8 +373,10 @@ export default function Projects() {
             <Form.Control as="select" value={status} onChange={e => setStatus(e.target.value)}>
               <option value={config.projectStatus.PLAN}>Planning</option>
               <option value={config.projectStatus.DESIGN}>Design</option>
-              <option value={config.projectStatus.IMPLEMENT}>Implementation</option>
-              <option value={config.projectStatus.LIVE}>Live</option>
+              <option value={config.projectStatus.DEPLOYMENT}>Deployment</option>
+              <option value={config.projectStatus.EVALUATION}>Evaluation</option>
+              <option value={config.projectStatus.DATA}>Data</option>
+              <option value={config.projectStatus.OTHER}>Other</option>
             </Form.Control>
           </Form.Group>
 
@@ -370,6 +398,7 @@ export default function Projects() {
 
           <Form.Group controlId="geom">
             <Form.Label>Location</Form.Label>
+            <Form.Check type="switch" id="statewide" label="Statewide" checked={statewide} onChange={e => setStatewide(e.target.checked)} />
             <div>
               <MapGL {...viewport}
                 style={{ width: '100%', height: '400px' }}
@@ -377,8 +406,10 @@ export default function Projects() {
                 accessToken={config.mapbox.TOKEN}
                 onViewportChange={setViewport}
               >
-                <Draw combineFeaturesControl={false} uncombineFeaturesControl={false} data={geom}
-                  onChange={handleMapDrawChange} />
+                {!statewide &&
+                  <Draw combineFeaturesControl={false} uncombineFeaturesControl={false} data={geom}
+                    onChange={handleMapDrawChange} />
+                }
               </MapGL>
               <div>
                 {geom != null && JSON.stringify(geom)}

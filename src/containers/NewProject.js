@@ -18,7 +18,7 @@ import MapGL, { Popup } from '@urbica/react-map-gl';
 import Draw from '@urbica/react-map-gl-draw';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
-import center from '@turf/center'
+import { center, length, along } from '@turf/turf'
 
 
 export default function NewProject() {
@@ -27,6 +27,7 @@ export default function NewProject() {
 
   const [status, setStatus] = useState(config.projectStatus.PLAN);
   const [title, setTitle] = useState("");
+  const [shortTitle, setShortTitle] = useState("");
   const [cata, setCata] = useState(false);
   const [catc, setCatc] = useState(false);
   const [cate, setCate] = useState(false);
@@ -44,6 +45,7 @@ export default function NewProject() {
   const [imageFileLabel, setImageFileLabel] = useState("Image file");
   const dataFile = useRef(null);
   const [dataFileLabel, setDataFileLabel] = useState("Data file");
+  const [statewide, setStatewide] = useState(false);
 
   const [editorState, setEditorState] = useState(
     () => EditorState.createEmpty(),
@@ -76,8 +78,8 @@ export default function NewProject() {
     setDataFileLabel(dataFile.current ? dataFile.current.name : "Data file");
   }
 
-  function getProjectLocation(geom) {    
-    var loc;
+  function getProjectLocation(geom) {
+    /*var loc;
     if (geom && geom.features.length > 0) {
       loc = center(geom);
     } else {
@@ -89,6 +91,30 @@ export default function NewProject() {
         }
       }
     }
+    return loc;*/
+    var loc;
+    if (geom && geom.features.length > 0) {
+      // if has point, use point
+      // if has polygon, use center of polygon
+      // else (linestrings), mid length
+      var feature = geom.features[0];
+
+      if (feature.geometry.type === "Point") {
+        //console.log("point: " + feature.geometry.coordinates.toString());
+        return feature;
+      } else if (feature.geometry.type === "Polygon") {
+        loc = center(feature);
+        //console.log("Polygon: " + loc.geometry.coordinates.toString());
+        return loc;
+      } else if (feature.geometry.type === "LineString") {
+        var len = length(feature);
+        loc = along(feature, len / 2);
+        //console.log("linestring: " + loc.geometry.coordinates.toString());
+        return loc;
+      }
+
+      loc = center(geom);
+    }
     return loc;
   }
 
@@ -99,8 +125,7 @@ export default function NewProject() {
     if ((imageFile.current && imageFile.current.size > config.MAX_ATTACHMENT_SIZE) ||
       (dataFile.current && dataFile.current.size > config.MAX_ATTACHMENT_SIZE)) {
       alert(
-        `Please choose a file smaller than ${
-        config.MAX_ATTACHMENT_SIZE / 1000000
+        `Please choose a file smaller than ${config.MAX_ATTACHMENT_SIZE / 1000000
         } MB.`
       );
       return;
@@ -127,6 +152,7 @@ export default function NewProject() {
 
       await createProject({
         title: title,
+        shortTitle: shortTitle,
         description: convertToRaw(editorState.getCurrentContent()),
         status: status,
         category: catArr,
@@ -140,10 +166,11 @@ export default function NewProject() {
         organization: organization,
         startDate: startDate,
         endDate: endDate,
-        location: getProjectLocation(geom),
-        geom: geom,
+        location: statewide ? null : getProjectLocation(geom),
+        geom: statewide ? null : geom,
         dataFiles: dataf,
-        imageFiles: imagef
+        imageFiles: imagef,
+        statewide: statewide
       });
 
       history.push("/");
@@ -173,6 +200,14 @@ export default function NewProject() {
           <Form.Control
             value={title}
             onChange={e => setTitle(e.target.value)}
+          />
+        </Form.Group>
+
+        <Form.Group controlId="shortTitle">
+          <Form.Label>Short Title (for display in map view)</Form.Label>
+          <Form.Control
+            value={shortTitle}
+            onChange={e => setShortTitle(e.target.value)}
           />
         </Form.Group>
 
@@ -231,8 +266,10 @@ export default function NewProject() {
           <Form.Control as="select" value={status} onChange={e => setStatus(e.target.value)}>
             <option value={config.projectStatus.PLAN}>Planning</option>
             <option value={config.projectStatus.DESIGN}>Design</option>
-            <option value={config.projectStatus.IMPLEMENT}>Implementation</option>
-            <option value={config.projectStatus.LIVE}>Live</option>
+            <option value={config.projectStatus.DEPLOYMENT}>Deployment</option>
+            <option value={config.projectStatus.EVALUATION}>Evaluation</option>
+            <option value={config.projectStatus.DATA}>Data</option>
+            <option value={config.projectStatus.OTHER}>Other</option>
           </Form.Control>
         </Form.Group>
 
@@ -254,6 +291,7 @@ export default function NewProject() {
 
         <Form.Group controlId="geom">
           <Form.Label>Location</Form.Label>
+          <Form.Check type="switch" id="statewide" label="Statewide" checked={statewide} onChange={e => setStatewide(e.target.checked)} />
           <div>
             <MapGL {...viewport}
               style={{ width: '100%', height: '400px' }}
@@ -261,8 +299,10 @@ export default function NewProject() {
               accessToken={config.mapbox.TOKEN}
               onViewportChange={setViewport}
             >
-              <Draw combineFeaturesControl={false} uncombineFeaturesControl={false}
-                onChange={handleMapDrawChange} />
+              {!statewide &&
+                <Draw combineFeaturesControl={false} uncombineFeaturesControl={false}
+                  onChange={handleMapDrawChange} />
+              }
             </MapGL>
             <div>
               {geom != null && JSON.stringify(geom)}

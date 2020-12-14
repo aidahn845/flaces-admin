@@ -7,6 +7,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@turf/turf": "^5.1.6",
     "@urbica/react-map-gl": "^1.14.1",
     "@urbica/react-map-gl-draw": "^0.3.4",
     "aws-amplify": "^3.0.24",
@@ -31,7 +32,7 @@
   },
   "scripts": {
     "preinstall": "npx npm-force-resolutions",
-    "start": "react-scripts start",
+    "start": "set PORT=3003 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
