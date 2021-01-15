@@ -401,7 +401,7 @@ export default function Projects() {
             <Form.Check type="switch" id="statewide" label="Statewide" checked={statewide} onChange={e => setStatewide(e.target.checked)} />
             <div>
               <MapGL {...viewport}
-                style={{ width: '100%', height: '400px' }}
+                style={{ width: '100%', height: '600px' }}
                 mapStyle="mapbox://styles/mapbox/light-v10"
                 accessToken={config.mapbox.TOKEN}
                 onViewportChange={setViewport}
