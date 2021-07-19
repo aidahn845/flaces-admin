@@ -185,7 +185,7 @@ export default function Projects() {
   }
 
   function saveProject(project) {
-          console.log('id: ' + id);
+    console.log('id: ' + id);
 
     return API.put("projects", `/projects/${id}`, {
       body: project
@@ -411,9 +411,9 @@ export default function Projects() {
                     onChange={handleMapDrawChange} />
                 }
               </MapGL>
-              <div>
+              {/* <div>
                 {geom != null && JSON.stringify(geom)}
-              </div>
+              </div> */}
             </div>
           </Form.Group>
 

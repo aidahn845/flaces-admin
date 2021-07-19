@@ -23,16 +23,13 @@ export default function Home() {
       try {
         const projects = await loadProjects();
         projects.sort((a, b) => {
-          if (a.createdAt < b.createdAt)
+          /*if (a.createdAt < b.createdAt)
             return 1;
           if (a.createdAt > b.createdAt)
             return -1;
-          return 0;
+          return 0;*/
+          return a.title.localeCompare(b.title);
         });
-
-        /*         let activeProjects = projects.filter(function (element) {
-                  return element.active == true;
-                }); */
 
         //console.log(projects);
         setProjects(projects);
@@ -65,7 +62,7 @@ export default function Home() {
     return [{}].concat(projects).map((project, i) =>
       i !== 0 ? (
         <LinkContainer key={project.projectId} to={`/projects/${project.projectId}`}>
-          <ListGroup.Item>
+          <ListGroup.Item action>
             <div class="title">
               {project.title.trim().split("\n")[0]}
               {
@@ -74,12 +71,15 @@ export default function Home() {
                   : <Badge variant="secondary" className="float-right">Pending</Badge>
               }
             </div>
-            <div class="subtext">{"Created: " + new Date(project.createdAt).toLocaleDateString()}</div>
+            <div class="subtext">
+              {"Created: " + new Date(project.createdAt).toLocaleDateString()}
+              {project.updatedAt && <span>;&nbsp;{"Updated: " + new Date(project.updatedAt).toLocaleDateString()}</span>}
+            </div>
           </ListGroup.Item>
         </LinkContainer>
       ) : (
           <LinkContainer key="new" to="/projects/new">
-            <ListGroup.Item>
+            <ListGroup.Item action>
               <b>{"\uFF0B"}</b> New Project
             </ListGroup.Item>
           </LinkContainer>

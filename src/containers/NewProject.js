@@ -304,9 +304,9 @@ export default function NewProject() {
                   onChange={handleMapDrawChange} />
               }
             </MapGL>
-            <div>
+            {/* <div>
               {geom != null && JSON.stringify(geom)}
-            </div>
+            </div> */}
           </div>
         </Form.Group>
 
