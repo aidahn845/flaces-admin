@@ -59,6 +59,7 @@ export default function Home() {
   }
 
   function renderProjectsList(projects) {
+    //console.log(projects.length + ' projects');
     return [{}].concat(projects).map((project, i) =>
       i !== 0 ? (
         <LinkContainer key={project.projectId} to={`/projects/${project.projectId}`}>
@@ -80,7 +81,7 @@ export default function Home() {
       ) : (
           <LinkContainer key="new" to="/projects/new">
             <ListGroup.Item action>
-              <b>{"\uFF0B"}</b> New Project
+              <b>{"\uFF0B"}</b> Create New Project
             </ListGroup.Item>
           </LinkContainer>
         )
@@ -90,7 +91,7 @@ export default function Home() {
   function renderLander() {
     return (
       <div className="lander">
-        <h1>FL ACES11111</h1>
+        <h1>FL ACES</h1>
         <p></p>
         <div>
           <Link to="/login" className="btn btn-info btn-lg" style={{ margin: "20px" }}>
