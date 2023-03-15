@@ -147,8 +147,8 @@ export default function NewProject() {
 
       const imagef = imageFile.current ? await s3Upload(imageFile.current) : null;
       const dataf = dataFile.current ? await s3Upload(dataFile.current) : null;
-      console.log(imagef);
-      console.log(dataf);
+      //console.log(imagef);
+      //console.log(dataf);
 
       await createProject({
         title: title,

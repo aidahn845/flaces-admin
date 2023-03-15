@@ -112,7 +112,7 @@ export default function Projects() {
         if (endDate)
           setEndDate(endDate);
 
-        if (geom && geom.features.length > 0) {
+        if (geom && geom.features && geom.features.length > 0) {
           setGeom(geom);
         }
 
@@ -120,7 +120,7 @@ export default function Projects() {
           setViewport({
             latitude: location.geometry.coordinates[1],
             longitude: location.geometry.coordinates[0],
-            zoom: 7.5
+            zoom: statewide ? 6 : 10
           });
         }
 
@@ -159,7 +159,7 @@ export default function Projects() {
 
   function getProjectLocation(geom) {
     var loc;
-    if (geom && geom.features.length > 0) {
+    if (geom && geom.features && geom.features.length > 0) {
       // if has point, use point
       // if has polygon, use center of polygon
       // else (linestrings), mid length

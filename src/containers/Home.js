@@ -17,28 +17,32 @@ export default function Home() {
   useEffect(() => {
     async function onLoad() {
       if (!isAuthenticated) {
-        //return;
+        return;
       }
 
       try {
         const projects = await loadProjects();
-        projects.sort((a, b) => {
-          /*if (a.createdAt < b.createdAt)
-            return 1;
-          if (a.createdAt > b.createdAt)
-            return -1;
-          return 0;*/
-          return a.title.localeCompare(b.title);
-        });
 
+        if (projects && projects.length ) {
+          projects.sort((a, b) => {
+            /*if (a.createdAt < b.createdAt)
+              return 1;
+            if (a.createdAt > b.createdAt)
+              return -1;
+            return 0;*/
+            return a.title.localeCompare(b.title);
+          });
+          
         //console.log(projects);
         setProjects(projects);
+        }
+
         //setActiveProjects(activeProjects);
         setIsLoading(false);
       } catch (e) {
         onError(e);
       }
-      
+
     }
 
     onLoad();
@@ -68,8 +72,8 @@ export default function Home() {
               {project.title.trim().split("\n")[0]}
               {
                 project.active
-                  ? <Badge variant="primary" className="float-right">Approved</Badge>
-                  : <Badge variant="secondary" className="float-right">Pending</Badge>
+                  ? <Badge variant="primary" className="float-right">Active</Badge>
+                  : <Badge variant="secondary" className="float-right">Inactive</Badge>
               }
             </div>
             <div class="subtext">
@@ -79,12 +83,12 @@ export default function Home() {
           </ListGroup.Item>
         </LinkContainer>
       ) : (
-          <LinkContainer key="new" to="/projects/new">
-            <ListGroup.Item action>
-              <b>{"\uFF0B"}</b> Create New Project
-            </ListGroup.Item>
-          </LinkContainer>
-        )
+        <LinkContainer key="new" to="/projects/new">
+          <ListGroup.Item action>
+            <b>{"\uFF0B"}</b> Create New Project
+          </ListGroup.Item>
+        </LinkContainer>
+      )
     );
   }
 
@@ -96,10 +100,10 @@ export default function Home() {
         <div>
           <Link to="/login" className="btn btn-info btn-lg" style={{ margin: "20px" }}>
             Login
-        </Link>
+          </Link>
           <Link to="/signup" className="btn btn-success btn-lg" style={{ margin: "20px" }}>
             Signup
-        </Link>
+          </Link>
         </div>
       </div>
     );
