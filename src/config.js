@@ -1,19 +1,5 @@
 const prod = {
   STRIPE_KEY: "",
-/*   s3: {
-    REGION: "us-east-2",
-    BUCKET: "aces-uploads-2"
-  },
-  apiGateway: {
-    REGION: "us-east-2",
-    URL: "https://ibdzej0avd.execute-api.us-east-2.amazonaws.com/prod"
-  },
-  cognito: {
-    REGION: "us-east-2",
-    USER_POOL_ID: "us-east-2_FFpJCTVpa",
-    APP_CLIENT_ID: "ilptchc0vkmm2fah12mhv61su",
-    IDENTITY_POOL_ID: "us-east-2:db7ea622-26b0-41af-a450-4b89eda1b879"
-  }, */
 
   s3: {
     REGION: "us-east-2",
